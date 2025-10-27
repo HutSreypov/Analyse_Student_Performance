@@ -31,7 +31,8 @@
             <td>{{ student[1] }}</td>
             <td>{{ student[2] }}</td>
             <td>{{ student[3] }}</td>
-            <td><a href="{{ url_for('student_bp.delete_student', id=student[0]) }}">Delete</a></td>
+            <td><a href="{{ url_for('student_bp.list_students', id=student[0]) }}">Delete</a></td>
+            
         </tr>
         {% endfor %}
     </tbody>

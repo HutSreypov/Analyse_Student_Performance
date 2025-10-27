@@ -4,8 +4,9 @@
 {% block content %}
 <h2>Students</h2>
 
-<form method="post" class="row g-2 mb-3">
-  <div class="col-md-3">
+<!-- Add Student Form -->
+<form method="POST" action="{{ url_for('student_bp.list_students') }}" class="row g-2 mb-3">
+  <div class="col-md-4">
     <input class="form-control" name="name" placeholder="Full name" required>
   </div>
   <div class="col-md-2">
@@ -22,6 +23,7 @@
   </div>
 </form>
 
+<!-- Students Table -->
 <table class="table table-striped table-bordered">
   <thead>
     <tr>
@@ -40,7 +42,7 @@
       <td>{{ s.gender }}</td>
       <td>{{ s.class_name }}</td>
       <td>
-        <a class="btn btn-sm btn-outline-primary"
+        <a class="btn btn-sm btn-outline-primary" 
            href="{{ url_for('student_bp.student_progress', student_id=s.id) }}">
            View Progress
         </a>
