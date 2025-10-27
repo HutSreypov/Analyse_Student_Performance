@@ -1,87 +1,49 @@
-from config import get_connection  # <- use the correct function name
+from config import get_connection
 
 class StudentModel:
     @staticmethod
     def get_all():
         db = get_connection()
-        try:
-            cursor = db.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM students")
-            return cursor.fetchall()
-        finally:
-            cursor.close()
-            db.close()
-    
-    @staticmethod
-    def get_by_id(student_id):
-        db = get_connection()
-        try:
-            cursor = db.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM students WHERE id = %s", (student_id,))
-            return cursor.fetchone()
-        finally:
-            cursor.close()
-            db.close()
-    
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM students")
+        data = cursor.fetchall()
+        cursor.close()
+        db.close()
+        return data
+
     @staticmethod
     def add_student(name, gender, class_name):
         db = get_connection()
-        try:
-            cursor = db.cursor()
-            cursor.execute(
-                "INSERT INTO students (name, gender, class_name) VALUES (%s, %s, %s)",
-                (name, gender, class_name)
-            )
-            db.commit()
-            return cursor.lastrowid
-        finally:
-            cursor.close()
-            db.close()
-
-class StudentModel:
-    @staticmethod
-    def get_all():
-        return [
-            {"id": 1, "name": "Srey Pov", "gender": "F", "class_name": "10A"},
-            {"id": 2, "name": "Chan Dara", "gender": "M", "class_name": "10B"},
-            {"id": 3, "name": "Sothea", "gender": "F", "class_name": "10C"},
-        ]
+        cursor = db.cursor()
+        cursor.execute(
+            "INSERT INTO students (name, gender, class_name) VALUES (%s, %s, %s)",
+            (name, gender, class_name)
+        )
+        db.commit()
+        cursor.close()
+        db.close()
 
     @staticmethod
-    def update_student(student_id, name=None, gender=None, class_name=None):
+    def get_by_id(student_id):
         db = get_connection()
-        try:
-            cursor = db.cursor()
-            fields = []
-            values = []
-            if name:
-                fields.append("name=%s")
-                values.append(name)
-            if gender:
-                fields.append("gender=%s")
-                values.append(gender)
-            if class_name:
-                fields.append("class_name=%s")
-                values.append(class_name)
-            if not fields:
-                return False
-            values.append(student_id)
-            sql = f"UPDATE students SET {', '.join(fields)} WHERE id=%s"
-            cursor.execute(sql, values)
-            db.commit()
-            return cursor.rowcount > 0
-        finally:
-            cursor.close()
-            db.close()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM students WHERE id=%s", (student_id,))
+        student = cursor.fetchone()
+        cursor.close()
+        db.close()
+        return student
 
     @staticmethod
-    def delete_student(student_id):
+    def get_progress(student_id):
         db = get_connection()
-        try:
-            cursor = db.cursor()
-            cursor.execute("DELETE FROM students WHERE id = %s", (student_id,))
-            db.commit()
-            return cursor.rowcount > 0
-        finally:
-            cursor.close()
-            db.close()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT sb.name AS subject, s.midterm, s.final, s.assignment, s.total, s.grade
+            FROM scores s
+            JOIN subjects sb ON s.subject_id = sb.id
+            WHERE s.student_id=%s
+        """, (student_id,))
+        data = cursor.fetchall()
+        cursor.close()
+        db.close()
+        return data

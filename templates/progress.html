@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Student Progress{% endblock %}
+
+{% block content %}
+<h2>Progress for {{ student.name }}</h2>
+
+<!-- Chart Container -->
+<canvas id="progressChart" width="400" height="200"></canvas>
+
+<table class="table table-bordered mt-4">
+    <thead>
+        <tr>
+            <th>Subject</th>
+            <th>Midterm</th>
+            <th>Final</th>
+            <th>Assignment</th>
+            <th>Total</th>
+            <th>Grade</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for score in scores %}
+        <tr>
+            <td>{{ score.subject_name }}</td>
+            <td>{{ score.midterm }}</td>
+            <td>{{ score.final }}</td>
+            <td>{{ score.assignment }}</td>
+            <td>{{ score.total }}</td>
+            <td>{{ score.grade }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{{ url_for('student_bp.list_students') }}" class="btn btn-secondary">Back to Students</a>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('progressChart').getContext('2d');
+const progressChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [{% for score in scores %}'{{ score.subject_name }}',{% endfor %}],
+        datasets: [
+            {
+                label: 'Midterm',
+                data: [{% for score in scores %}{{ score.midterm }},{% endfor %}],
+                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+            },
+            {
+                label: 'Final',
+                data: [{% for score in scores %}{{ score.final }},{% endfor %}],
+                backgroundColor: 'rgba(255, 99, 132, 0.6)'
+            },
+            {
+                label: 'Assignment',
+                data: [{% for score in scores %}{{ score.assignment }},{% endfor %}],
+                backgroundColor: 'rgba(255, 206, 86, 0.6)'
+            },
+            {
+                label: 'Total',
+                data: [{% for score in scores %}{{ score.total }},{% endfor %}],
+                backgroundColor: 'rgba(75, 192, 192, 0.6)'
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'top' },
+            title: { display: true, text: 'Student Progress Chart' }
+        },
+        scales: {
+            y: { beginAtZero: true, max: 100 }
+        }
+    }
+});
+</script>
+
+{% endblock %}

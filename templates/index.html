@@ -1,11 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 {% block content %}
-  <h1>Welcome</h1>
-  <p>Use the navigation to manage students, add scores, and view progress pages.</p>
-  <p>Quick links:</p>
-  <ul>
-    <li><a href="{{ url_for('student_bp.list_students') }}">Students</a></li>
-    <li><a href="{{ url_for('score_bp.list_scores') }}">Scores</a></li>
-  </ul>
+  <h1>Welcome, {{ username }}!</h1>
+  <p>Use the navigation menu to manage students, scores, subjects, and view analysis.</p>
 {% endblock %}

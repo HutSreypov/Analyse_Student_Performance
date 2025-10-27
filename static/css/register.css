@@ -15,6 +15,7 @@ body {
     justify-content: center;
     align-items: center;
     /* background: rgba(173, 216, 230, 0.729); */
+    flex-direction: column;
 }
 
 /* Form container */

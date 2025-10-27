@@ -1,43 +1,42 @@
+# routes/analysis_routes.py
 from flask import Blueprint, render_template
-from flask_login import login_required
-from models.score_model import ScoreModel
+from models.models import get_connection
 
-analysis_bp = Blueprint('analysis_bp', __name__, url_prefix='/analysis')
+analysis_bp = Blueprint('analysis_bp', __name__)
 
-@analysis_bp.route('/')
-@login_required
+@analysis_bp.route('/analysis')
 def analysis_index():
-    """
-    Analysis page:
-    - Shows all scores
-    - Computes class average per subject
-    - Computes grade distribution
-    """
-    scores = ScoreModel.get_all()  # list of dicts with student_id, subject_id, total, grade
-    
-    # Compute class averages per subject
-    subject_totals = {}
-    subject_counts = {}
-    grade_counts = {'A': 0, 'B': 0, 'C': 0, 'D': 0, 'F': 0}
-    
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # Join scores with subjects and students
+    cursor.execute("""
+        SELECT sc.id AS score_id, sc.student_id, sc.subject_id, sc.midterm, sc.final, sc.assignment, sc.total, sc.grade,
+               sb.name AS subject_name, st.name AS student_name
+        FROM scores sc
+        JOIN subjects sb ON sc.subject_id = sb.id
+        JOIN students st ON sc.student_id = st.id
+        ORDER BY sc.student_id, sc.subject_id
+    """)
+    scores = cursor.fetchall()
+
+    # Optional: organize by student or subject
+    analysis_data = []
     for s in scores:
-        subject_id = s['subject_id']
-        total = s['total'] or 0
-        grade = s.get('grade', 'F')
-        
-        subject_totals[subject_id] = subject_totals.get(subject_id, 0) + total
-        subject_counts[subject_id] = subject_counts.get(subject_id, 0) + 1
-        
-        if grade in grade_counts:
-            grade_counts[grade] += 1
-        else:
-            grade_counts[grade] = 1
-    
-    subject_averages = {k: (subject_totals[k] / subject_counts[k]) for k in subject_totals}
-    
-    return render_template(
-        'analysis.html',
-        scores=scores,
-        subject_averages=subject_averages,
-        grade_counts=grade_counts
-    )
+        analysis_data.append({
+            'score_id': s['score_id'],
+            'student_id': s['student_id'],
+            'student_name': s['student_name'],
+            'subject_id': s['subject_id'],
+            'subject_name': s['subject_name'],
+            'midterm': s['midterm'],
+            'final': s['final'],
+            'assignment': s['assignment'],
+            'total': s['total'],
+            'grade': s['grade']
+        })
+
+    cursor.close()
+    conn.close()
+
+    return render_template('analysis.html', scores=analysis_data)

@@ -3,7 +3,7 @@
 {% block content %}
 <h2>Scores</h2>
 
-<form method="post" action="{{ url_for('score_bp.list_scores') }}" class="row g-2 mb-3">
+<form method="post" action="{{ url_for('score_bp.add_score') }}" class="row g-2 mb-3">
   <div class="col-md-3">
     <select name="student_id" class="form-select" required>
       <option value="">Select student</option>
