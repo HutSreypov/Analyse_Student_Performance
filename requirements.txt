@@ -1,0 +1,7 @@
+Flask
+mysqlclient
+mysql-connector-python
+Flask-WTF
+Flask-Login
+python-dotenv
+gunicorn

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Scores{% endblock %}
+{% block content %}
+<h2>Scores</h2>
+
+<form method="post" action="{{ url_for('score_bp.list_scores') }}" class="row g-2 mb-3">
+  <div class="col-md-3">
+    <select name="student_id" class="form-select" required>
+      <option value="">Select student</option>
+      {% for st in students %}
+      <option value="{{ st.id }}">{{ st.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
+    <select name="subject_id" class="form-select" required>
+      <option value="">Select subject</option>
+      {% for sub in subjects %}
+      <option value="{{ sub.id }}">{{ sub.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-1"><input class="form-control" name="midterm" placeholder="Mid"></div>
+  <div class="col-md-1"><input class="form-control" name="assignment" placeholder="Assign"></div>
+  <div class="col-md-1"><input class="form-control" name="final" placeholder="Final"></div>
+  <div class="col-md-1"><button class="btn btn-success">Add</button></div>
+</form>
+
+<table class="table">
+  <thead><tr><th>Student</th><th>Subject</th><th>Mid</th><th>Assign</th><th>Final</th><th>Total</th><th>Grade</th></tr></thead>
+  <tbody>
+    {% for s in scores %}
+    <tr>
+      <td>{{ s.student_name }}</td>
+      <td>{{ s.subject_name }}</td>
+      <td>{{ s.midterm }}</td>
+      <td>{{ s.assignment }}</td>
+      <td>{{ s.final }}</td>
+      <td>{{ s.total }}</td>
+      <td>{{ s.grade }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

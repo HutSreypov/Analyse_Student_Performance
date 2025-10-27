@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}{{ student.name }} - Progress{% endblock %}
+
+{% block head %}
+<style>
+  /* small per-page tweaks */
+  .chart-card {
+    padding: 12px;
+    border: 1px solid #e6e6e6;
+    border-radius: 8px;
+    background: #fff;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>Progress: {{ student.name }}</h2>
+<p>Class: {{ student.class_name if student.class_name is defined else "N/A" }}</p>
+<p>Gender: {{ student.gender if student.gender is defined else "N/A" }}</p>
+
+<div class="row g-3">
+  <div class="col-md-6">
+    <div class="chart-card">
+      <h5>Subject Scores (Total)</h5>
+      <canvas id="subjectTotalsChart" height="220"></canvas>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="chart-card">
+      <h5>Grade Distribution</h5>
+      <canvas id="gradeDistChart" height="220"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="mt-4 chart-card">
+  <h5>Scores Table</h5>
+  <table class="table table-sm" id="scoresTable">
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>Midterm</th>
+        <th>Assignment</th>
+        <th>Final</th>
+        <th>Total</th>
+        <th>Grade</th>
+        <th>Term</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<!-- Back link -->
+<div class="mt-3">
+  <a href="{{ url_for('student_bp.list_students') }}" class="btn btn-sm btn-secondary">Back to list</a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const STUDENT_ID = {{ student.id }};
+</script>
+<script src="{{ url_for('static', filename='js/progress.js') }}"></script>
+{% endblock %}
