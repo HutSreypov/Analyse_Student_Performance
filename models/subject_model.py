@@ -49,3 +49,18 @@ class SubjectModel:
         finally:
             cursor.close()
             db.close()
+            
+    @staticmethod
+    def update_subject(subject_id, name, code):
+        db = get_connection()
+        try:
+            cursor = db.cursor()
+            cursor.execute(
+                "UPDATE subjects SET name = %s, code = %s WHERE id = %s",
+                (name, code, subject_id)
+            )
+            db.commit()
+            return cursor.rowcount > 0
+        finally:
+            cursor.close()
+            db.close()

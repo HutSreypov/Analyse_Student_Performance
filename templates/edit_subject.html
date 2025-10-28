@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Subject{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Edit Subject</h2>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('subject_bp.edit_subject', id=subject.id) }}" class="mb-4">
+        <div class="form-group">
+            <label for="name">Subject Name:</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ subject.name }}" required>
+        </div>
+        <div class="form-group">
+            <label for="code">Subject Code:</label>
+            <input type="text" class="form-control" id="code" name="code" value="{{ subject.code }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Subject</button>
+        <a href="{{ url_for('subject_bp.list_subjects') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
