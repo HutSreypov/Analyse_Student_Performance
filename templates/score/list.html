@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Scores List{% endblock %}
+
+{% block content %}
+<h1>Scores List</h1>
+
+{% if scores %}
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Subject</th>
+            <th>Midterm</th>
+            <th>Final</th>
+            <th>Assignment</th>
+            <th>Total</th>
+            <th>Grade</th>
+            <th>Term</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for score in scores %}
+        <tr>
+            <td>{{ score.student_name }}</td>
+            <td>{{ score.subject_name }}</td>
+            <td>{{ score.midterm }}</td>
+            <td>{{ score.final }}</td>
+            <td>{{ score.assignment }}</td>
+            <td>{{ score.total }}</td>
+            <td>{{ score.grade }}</td>
+            <td>{{ score.term }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No scores found.</p>
+{% endif %}
+
+<a href="{{ url_for('score_bp.add_score') }}">Add New Score</a>
+{% endblock %}

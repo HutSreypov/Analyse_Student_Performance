@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Edit Score{% endblock %}
+
+{% block content %}
+<h2>Edit Score</h2>
+
+<form method="post" action="" class="row g-2 mb-3">
+  <div class="col-md-3">
+    <label>Student</label>
+    <select name="student_id" class="form-select" required>
+      {% for st in students %}
+      <option value="{{ st.id }}" {% if st.id == score.student_id %}selected{% endif %}>
+        {{ st.name }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-md-3">
+    <label>Subject</label>
+    <select name="subject_id" class="form-select" required>
+      {% for sub in subjects %}
+      <option value="{{ sub.id }}" {% if sub.id == score.subject_id %}selected{% endif %}>
+        {{ sub.name }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-md-1">
+    <label>Midterm</label>
+    <input class="form-control" name="midterm" value="{{ score.midterm }}">
+  </div>
+
+  <div class="col-md-1">
+    <label>Assignment</label>
+    <input class="form-control" name="assignment" value="{{ score.assignment }}">
+  </div>
+
+  <div class="col-md-1">
+    <label>Final</label>
+    <input class="form-control" name="final" value="{{ score.final }}">
+  </div>
+
+  <div class="col-md-2 align-self-end">
+    <button class="btn btn-primary">Update Score</button>
+    <a href="{{ url_for('score_bp.list_scores') }}" class="btn btn-secondary">Cancel</a>
+  </div>
+</form>
+{% endblock %}
