@@ -2,56 +2,76 @@
 {% block title %}Dashboard - Student Performance Analytics{% endblock %}
 
 {% block styles %}
+<link href="https://cdn.jsdelivr.net/npm/apexcharts@3.35.0/dist/apexcharts.min.css" rel="stylesheet">
 <style>
   :root {
     --primary-color: #5e72e4;
     --secondary-color: #2dce89;
     --info-color: #11cdef;
-    --warning-color: #fb6340;
-    --dark-color: #32325d;
-    --light-bg: #f8f9fe;
   }
-
+  
   body {
-    background-color: var(--light-bg);
-    color: #525f7f;
+    background-color: #f5f7fb;
   }
-
+  
+  body {
+    background-color: #f8f9fe;
+    color: #525f7f;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.5;
+  }
+  
   .welcome-section {
     background: linear-gradient(87deg, #5e72e4 0, #825ee4 100%);
     color: white;
-    padding: 2.5rem 2rem;
-    border-radius: 16px;
-    margin-bottom: 2.5rem;
-    box-shadow: 0 0 2rem 0 rgba(136, 152, 170, .15);
+    padding: 2.5rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+    box-shadow: var(--box-shadow);
     position: relative;
     overflow: hidden;
+    background-size: 150%;
+    background-position: 100% 50%;
+    transition: all 0.5s ease;
   }
-
+  
+  .welcome-section:hover {
+    background-position: 0% 50%;
+  }
+  
   .welcome-section::before {
     content: '';
     position: absolute;
-    top: 0;
-    right: 0;
-    width: 40%;
-    height: 100%;
-    background: url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23ffffff10' d='M44,-45.5C53.4,-34.7,55.9,-17.4,58.4,2.3C60.9,22,63.4,44,54,56.5C44.6,69,23.3,72,-0.7,72.6C-24.6,73.1,-49.2,71.1,-61.2,58.6C-73.2,46.1,-72.6,23,-71.2,1.2C-69.8,-20.6,-67.6,-41.2,-55.6,-52C-43.6,-62.8,-21.8,-63.8,-2.9,-61.5C16,-59.2,34.6,-53.6,44,-45.5Z' transform='translate(100 100)' /%3E%3C/svg%3E") no-repeat;
-    background-size: cover;
-    opacity: 0.5;
+    top: -50%;
+    right: -50px;
+    width: 300px;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    z-index: 0;
   }
   
+  /* Stat Cards */
   .stat-card {
     background: white;
-    border-radius: 12px;
-    padding: 1.75rem;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
     margin-bottom: 1.5rem;
-    box-shadow: 0 0 2rem 0 rgba(136, 152, 170, .1);
-    transition: all 0.4s cubic-bezier(0.34, 1.61, 0.7, 1);
-    border: none;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+    border: 0;
+    height: 100%;
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
-
+  
+  .stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+  }
+  
   .stat-card::before {
     content: '';
     position: absolute;
@@ -59,196 +79,259 @@
     left: 0;
     width: 4px;
     height: 100%;
-    background: var(--primary-color);
+    background: var(--primary);
   }
   
-  .stat-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 0 2rem 0 rgba(136, 152, 170, .2);
-  }
+  .stat-card.primary::before { background: var(--primary); }
+  .stat-card.success::before { background: var(--success); }
+  .stat-card.info::before { background: var(--info); }
+  .stat-card.warning::before { background: var(--warning); }
   
-  .stat-card i {
-    font-size: 2.25rem;
-    margin-bottom: 1.25rem;
-    color: var(--primary-color);
-    background: rgba(94, 114, 228, 0.1);
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
+  .stat-card .icon-wrapper {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 1rem;
   }
 
-  .stat-card.students i { color: #5e72e4; background: rgba(94, 114, 228, 0.1); }
-  .stat-card.scores i { color: #2dce89; background: rgba(45, 206, 137, 0.1); }
-  .stat-card.subjects i { color: #fb6340; background: rgba(251, 99, 64, 0.1); }
-  .stat-card.performance i { color: #f5365c; background: rgba(245, 54, 92, 0.1); }
-  
-  .stat-card h3 {
+  .stat-card.primary .icon-wrapper { background: rgba(67, 97, 238, 0.1); color: var(--primary); }
+  .stat-card.success .icon-wrapper { background: rgba(40, 167, 69, 0.1); color: var(--success); }
+  .stat-card.info .icon-wrapper { background: rgba(23, 162, 184, 0.1); color: var(--info); }
+  .stat-card.warning .icon-wrapper { background: rgba(255, 193, 7, 0.1); color: var(--warning); }
+
+  .stat-card i {
+    font-size: 1.75rem;
+  }
+
+  .stat-card .stat-value {
     font-size: 1.75rem;
     font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: var(--dark-color);
-  }
-  
-  .stat-card p {
-    color: #8898aa;
-    margin-bottom: 1rem;
-    font-size: 0.875rem;
-    font-weight: 500;
+    margin: 0.5rem 0;
+    color: var(--dark);
   }
 
-  .progress {
-    height: 6px;
-    border-radius: 3px;
-    background-color: #e9ecef;
+  .stat-card .stat-label {
+    color: var(--gray);
+    font-size: 0.9rem;
     margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
-  .progress-bar {
-    border-radius: 3px;
-  }
-  
-  .quick-actions .btn {
-    width: 100%;
-    margin-bottom: 1rem;
+  .stat-card .stat-change {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 0.9rem 1.25rem;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.875rem;
-    letter-spacing: 0.025em;
-    text-transform: uppercase;
-    transition: all 0.2s ease-in-out;
-    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+  }
+
+  .stat-card .stat-change.positive { color: var(--success); }
+  .stat-card .stat-change.negative { color: var(--danger); }
+
+  .stat-card .stat-change i {
+    font-size: 1rem;
+    margin-right: 0.25rem;
+  }
+
+  /* Quick Actions */
+  .quick-actions .card {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    height: 100%;
+  }
+
+  .quick-actions .card-header {
+    background: white;
+    border-bottom: 1px solid var(--light-gray);
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+  }
+
+  .quick-actions .card-body {
+    padding: 1.5rem;
+  }
+
+  .quick-actions .btn {
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0.875rem 1.25rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: var(--transition);
+    border: 1px solid var(--gray-light);
+    background: white;
+    color: var(--dark);
+    width: 100%;
+    text-align: left;
+  }
+
+  .quick-actions .btn i {
+    margin-right: 0.75rem;
+    font-size: 1.1rem;
+    width: 1.25rem;
+    text-align: center;
   }
 
   .quick-actions .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+    transform: translateX(5px);
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
   }
-  
+
+  /* Recent Activity */
   .recent-activity {
     background: white;
-    border-radius: 12px;
-    padding: 1.75rem;
-    box-shadow: 0 0 2rem 0 rgba(136, 152, 170, .1);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
     height: 100%;
   }
 
-  .recent-activity .section-title {
-    color: var(--dark-color);
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #e9ecef;
-  }
-  
-  .activity-item {
-    padding: 1.25rem 0;
-    border-bottom: 1px solid #f6f9fc;
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    transition: all 0.2s ease;
+  .recent-activity .card-header {
+    background: white;
+    border-bottom: 1px solid var(--light-gray);
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
   }
 
-  .activity-item:hover {
-    background-color: #f8f9fe;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    margin: 0 -1.75rem;
-    border-radius: 0;
+  .recent-activity .card-body {
+    padding: 1.5rem;
   }
-  
+
+  .activity-item {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--gray-light);
+    display: flex;
+    align-items: flex-start;
+    transition: var(--transition);
+  }
+
   .activity-item:last-child {
     border-bottom: none;
   }
-  
+
+  .activity-item:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+
   .activity-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    background: rgba(94, 114, 228, 0.1);
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    background-color: var(--primary-light);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--primary-color);
+    margin-right: 1rem;
+    color: var(--primary);
     flex-shrink: 0;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
   }
-  
+
+  .activity-icon.success { background: rgba(40, 167, 69, 0.1); color: var(--success); }
+  .activity-icon.warning { background: rgba(255, 193, 7, 0.1); color: var(--warning); }
+  .activity-icon.danger { background: rgba(220, 53, 69, 0.1); color: var(--danger); }
+
   .activity-content h6 {
-    margin-bottom: 0.25rem;
+    margin: 0 0 0.25rem;
     font-weight: 600;
-    color: var(--dark-color);
     font-size: 0.9375rem;
+    color: var(--dark);
   }
-  
+
+  .activity-content p {
+    margin: 0;
+    color: var(--gray);
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
   .activity-time {
     font-size: 0.75rem;
-    color: #adb5bd;
-    font-weight: 500;
+    color: var(--gray);
+    display: flex;
+    align-items: center;
+    margin-top: 0.25rem;
   }
-  
+
+  .activity-time i {
+    font-size: 0.7rem;
+  }
+
+  /* Charts */
   .chart-container {
     background: white;
-    border-radius: 12px;
-    padding: 1.75rem;
-    box-shadow: 0 0 2rem 0 rgba(136, 152, 170, .1);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
-  
+
+  .chart-header {
+    padding: 1.5rem 1.5rem 0.5rem;
+    border-bottom: 1px solid var(--gray-light);
+  }
+
+  .chart-body {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #performanceChart, #subjectDistributionChart {
+    flex: 1;
+    min-height: 250px;
+  }
+
+  /* Section Titles */
   .section-title {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    margin-bottom: 1.75rem;
-    color: var(--dark-color);
+    margin: 0;
+    color: var(--dark);
     display: flex;
     align-items: center;
     gap: 0.75rem;
   }
-  
+
   .section-title i {
-    color: var(--primary-color);
-    background: rgba(94, 114, 228, 0.1);
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
+    color: var(--primary);
+    font-size: 1.25rem;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: var(--primary-light);
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  .badge {
-    font-weight: 600;
-    padding: 0.5em 1em;
-    border-radius: 8px;
-    font-size: 0.75rem;
-    letter-spacing: 0.025em;
-  }
-  
+  /* Responsive Adjustments */
   @media (max-width: 992px) {
     .welcome-section {
       text-align: center;
-      padding: 2rem 1.5rem;
     }
-    
+
     .welcome-section::before {
       display: none;
     }
-    
+
     .stat-card {
-      text-align: center;
-      padding: 1.5rem;
+      text-align: left;
+      padding: 1.25rem;
     }
-    
-    .stat-card i {
+
+    .stat-card .icon-wrapper {
+      margin: 0 0 1rem;
       margin: 0 auto 1.25rem;
     }
 
@@ -264,16 +347,18 @@
 
 {% block content %}
 <div class="welcome-section">
-  <div class="d-flex justify-content-between align-items-center flex-wrap">
-    <div class="position-relative z-1">
-      <h1 class="display-5 fw-bold mb-3">Welcome back, {{ username }}! 👋</h1>
-      <p class="mb-0 opacity-90">Here's what's happening with your students today. Track performance, analyze data, and make informed decisions.</p>
-    </div>
-    <div class="mt-3 mt-md-0 position-relative z-1">
-      <span class="badge bg-white-10 text-white border-0 p-2 px-3">
-        <i class="far fa-clock me-2"></i>
-        <span id="currentTime"></span>
-      </span>
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <h1 class="display-5 fw-bold mb-3">Welcome back, {{ username }}! 👋</h1>
+        <p class="lead mb-0">Here's what's happening with your students today. Track performance, analyze data, and make informed decisions.</p>
+      </div>
+      <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+        <div class="d-inline-flex align-items-center bg-white-10 p-2 px-3 rounded-pill">
+          <i class="far fa-clock me-2"></i>
+          <span id="currentTime" class="fw-medium"></span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -282,15 +367,21 @@
   <!-- Students Card -->
   <div class="col-md-6 col-xl-3">
     <div class="stat-card students">
-      <i class="fas fa-user-graduate"></i>
-      <h3>1,248</h3>
-      <p>Total Students</p>
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div class="icon">
+          <i class="fas fa-user-graduate"></i>
+        </div>
+        <span class="badge bg-success bg-opacity-10 text-success">+12%</span>
+      </div>
+      <div class="value">1,248</div>
+      <div class="label">Total Students</div>
       <div class="progress">
-        <div class="progress-bar" role="progressbar" style="width: 75%; background-color: #5e72e4;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+        <div class="progress-bar" role="progressbar" style="width: 75%; background-color: var(--primary);" 
+             aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
       <div class="d-flex justify-content-between mt-2">
-        <small class="text-muted">+12% from last month</small>
-        <small class="fw-bold" style="color: #5e72e4;">75%</small>
+        <small class="text-muted">Last month: 1,115</small>
+        <small class="fw-bold" style="color: var(--primary);">75%</small>
       </div>
     </div>
   </div>
@@ -298,15 +389,21 @@
   <!-- Average Score Card -->
   <div class="col-md-6 col-xl-3">
     <div class="stat-card scores">
-      <i class="fas fa-chart-line"></i>
-      <h3>84.5%</h3>
-      <p>Average Score</p>
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div class="icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <span class="badge bg-success bg-opacity-10 text-success">+2.5%</span>
+      </div>
+      <div class="value">84.5%</div>
+      <div class="label">Average Score</div>
       <div class="progress">
-        <div class="progress-bar" role="progressbar" style="width: 84.5%; background-color: #2dce89;" aria-valuenow="84.5" aria-valuemin="0" aria-valuemax="100"></div>
+        <div class="progress-bar" role="progressbar" style="width: 84.5%; background-color: var(--secondary);" 
+             aria-valuenow="84.5" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
       <div class="d-flex justify-content-between mt-2">
-        <small class="text-muted">+2.5% from last term</small>
-        <small class="fw-bold" style="color: #2dce89;">84.5%</small>
+        <small class="text-muted">Last term: 82.0%</small>
+        <small class="fw-bold" style="color: var(--secondary);">84.5%</small>
       </div>
     </div>
   </div>
@@ -314,15 +411,21 @@
   <!-- Subjects Card -->
   <div class="col-md-6 col-xl-3">
     <div class="stat-card subjects">
-      <i class="fas fa-book-open"></i>
-      <h3>12</h3>
-      <p>Active Subjects</p>
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div class="icon">
+          <i class="fas fa-book-open"></i>
+        </div>
+        <span class="badge bg-warning bg-opacity-10 text-warning">+3 new</span>
+      </div>
+      <div class="value">12</div>
+      <div class="label">Active Subjects</div>
       <div class="progress">
-        <div class="progress-bar" role="progressbar" style="width: 60%; background-color: #fb6340;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+        <div class="progress-bar" role="progressbar" style="width: 60%; background-color: var(--warning);" 
+             aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
       <div class="d-flex justify-content-between mt-2">
-        <small class="text-muted">3 new this semester</small>
-        <small class="fw-bold" style="color: #fb6340;">60%</small>
+        <small class="text-muted">This semester</small>
+        <small class="fw-bold" style="color: var(--warning);">60%</small>
       </div>
     </div>
   </div>
@@ -330,17 +433,22 @@
   <!-- Performance Card -->
   <div class="col-md-6 col-xl-3">
     <div class="stat-card performance">
-      <i class="fas fa-trophy"></i>
-      <h3>92%</h3>
-      <p>Pass Rate</p>
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div class="icon">
+          <i class="fas fa-trophy"></i>
+        </div>
+        <span class="badge bg-danger bg-opacity-10 text-danger">+5%</span>
+      </div>
+      <div class="value">92%</div>
+      <div class="label">Pass Rate</div>
       <div class="progress">
-        <div class="progress-bar" role="progressbar" style="width: 92%; background-color: #f5365c;" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100"></div>
+        <div class="progress-bar" role="progressbar" style="width: 92%; background-color: var(--danger);" 
+             aria-valuenow="92" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
       <div class="d-flex justify-content-between mt-2">
-        <small class="text-muted">+5% from last term</small>
-        <small class="fw-bold" style="color: #f5365c;">92%</small>
+        <small class="text-muted">Last year: 87%</small>
+        <small class="fw-bold" style="color: var(--danger);">92%</small>
       </div>
-      <small class="text-muted">+5% from last year</small>
     </div>
   </div>
 </div>
@@ -349,29 +457,35 @@
   <!-- Performance Chart -->
   <div class="col-lg-8">
     <div class="chart-container">
-      <h5 class="section-title"><i class="fas fa-chart-bar"></i> Performance Overview</h5>
-      <div style="height: 300px;" class="d-flex align-items-center justify-content-center bg-light rounded">
-        <p class="text-muted mb-0">Performance chart will be displayed here</p>
+      <div class="chart-header">
+        <h5 class="section-title"><i class="fas fa-chart-bar"></i> Performance Overview</h5>
+      </div>
+      <div class="chart-body">
+        <div id="performanceChart"></div>
       </div>
     </div>
   </div>
   
   <!-- Quick Actions -->
   <div class="col-lg-4">
-    <div class="quick-actions">
-      <h5 class="section-title"><i class="fas fa-bolt"></i> Quick Actions</h5>
-      <a href="{{ url_for('student_bp.add_student') }}" class="btn btn-primary">
-        <i class="fas fa-user-plus"></i> Add New Student
-      </a>
-      <a href="{{ url_for('score_bp.add_score') }}" class="btn btn-outline-primary">
-        <i class="fas fa-plus-circle"></i> Record Score
-      </a>
-      <a href="{{ url_for('analysis_bp.analysis_index') }}" class="btn btn-outline-primary">
-        <i class="fas fa-chart-pie"></i> View Reports
-      </a>
-      <a href="#" class="btn btn-outline-secondary">
-        <i class="fas fa-file-export"></i> Export Data
-      </a>
+    <div class="quick-actions card h-100">
+      <div class="card-header">
+        <h5 class="section-title mb-0"><i class="fas fa-bolt"></i> Quick Actions</h5>
+      </div>
+      <div class="card-body">
+        <a href="{{ url_for('student_bp.add_student') }}" class="btn">
+          <i class="fas fa-user-plus"></i> Add New Student
+        </a>
+        <a href="{{ url_for('score_bp.add_score') }}" class="btn">
+          <i class="fas fa-plus-circle"></i> Record Score
+        </a>
+        <a href="{{ url_for('subject_bp.list_subjects') }}" class="btn">
+          <i class="fas fa-book"></i> Manage Subjects
+        </a>
+        <a href="{{ url_for('analysis_bp.analysis_index') }}" class="btn">
+          <i class="fas fa-chart-pie"></i> View Reports
+        </a>
+      </div>
     </div>
   </div>
 </div>
@@ -379,53 +493,53 @@
 <div class="row">
   <!-- Recent Activities -->
   <div class="col-12">
-    <div class="recent-activity">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h5 class="section-title mb-0"><i class="fas fa-history"></i> Recent Activities</h5>
-        <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
-      </div>
-      
-      <div class="activity-item">
-        <div class="activity-icon">
-          <i class="fas fa-user-edit"></i>
-        </div>
-        <div class="activity-content">
-          <h6 class="mb-1">Student Record Updated</h6>
-          <p class="mb-1">John Doe's information was updated by Admin</p>
-          <span class="activity-time">10 minutes ago</span>
+    <div class="recent-activity card h-100">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <h5 class="section-title mb-0"><i class="fas fa-history"></i> Recent Activities</h5>
+          <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
         </div>
       </div>
-      
-      <div class="activity-item">
-        <div class="activity-icon">
-          <i class="fas fa-chart-line"></i>
+      <div class="card-body p-0">
+        <div class="activity-item">
+          <div class="activity-icon">
+            <i class="fas fa-user-edit"></i>
+          </div>
+          <div class="activity-content">
+            <h6 class="mb-1">Student Record Updated</h6>
+            <p class="mb-1">John Doe's information was updated by Admin</p>
+            <span class="activity-time">10 minutes ago</span>
+          </div>
         </div>
-        <div class="activity-content">
-          <h6 class="mb-1">New Score Recorded</h6>
-          <p class="mb-1">Mathematics score added for Sarah Johnson</p>
-          <span class="activity-time">2 hours ago</span>
+        <div class="activity-item">
+          <div class="activity-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="activity-content">
+            <h6 class="mb-1">New Score Recorded</h6>
+            <p class="mb-1">Mathematics score added for Sarah Johnson</p>
+            <span class="activity-time">2 hours ago</span>
+          </div>
         </div>
-      </div>
-      
-      <div class="activity-item">
-        <div class="activity-icon">
-          <i class="fas fa-user-graduate"></i>
+        <div class="activity-item">
+          <div class="activity-icon">
+            <i class="fas fa-user-graduate"></i>
+          </div>
+          <div class="activity-content">
+            <h6 class="mb-1">New Student Registered</h6>
+            <p class="mb-1">Michael Brown joined the system</p>
+            <span class="activity-time">Yesterday</span>
+          </div>
         </div>
-        <div class="activity-content">
-          <h6 class="mb-1">New Student Registered</h6>
-          <p class="mb-1">Michael Brown joined the system</p>
-          <span class="activity-time">Yesterday</span>
-        </div>
-      </div>
-      
-      <div class="activity-item">
-        <div class="activity-icon">
-          <i class="fas fa-file-export"></i>
-        </div>
-        <div class="activity-content">
-          <h6 class="mb-1">Report Generated</h6>
-          <p class="mb-1">Class 10A performance report was exported</p>
-          <span class="activity-time">2 days ago</span>
+        <div class="activity-item">
+          <div class="activity-icon">
+            <i class="fas fa-file-export"></i>
+          </div>
+          <div class="activity-content">
+            <h6 class="mb-1">Report Generated</h6>
+            <p class="mb-1">Class 10A performance report was exported</p>
+            <span class="activity-time">2 days ago</span>
+          </div>
         </div>
       </div>
     </div>
@@ -434,6 +548,7 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
   // Update current time
   function updateCurrentTime() {
@@ -441,7 +556,7 @@
     const options = { 
       weekday: 'long', 
       year: 'numeric', 
-      month: 'long', 
+      month: 'short', 
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
@@ -453,8 +568,97 @@
   updateCurrentTime();
   setInterval(updateCurrentTime, 60000);
   
-  // Initialize tooltips
+  // Initialize Performance Chart
   document.addEventListener('DOMContentLoaded', function() {
+    // Performance Chart
+    var performanceOptions = {
+      series: [{
+        name: 'Average Score',
+        data: [65, 72, 68, 73, 78, 82, 85, 88, 86, 84, 87, 90]
+      }],
+      chart: {
+        height: '100%',
+        type: 'area',
+        toolbar: {
+          show: false
+        },
+        zoom: {
+          enabled: false
+        },
+        fontFamily: 'Inter, sans-serif'
+      },
+      colors: ['#5e72e4'],
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        curve: 'smooth',
+        width: 2
+      },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shadeIntensity: 1,
+          opacityFrom: 0.7,
+          opacityTo: 0.1,
+          stops: [0, 90, 100]
+        }
+      },
+      xaxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        axisBorder: {
+          show: false
+        },
+        axisTicks: {
+          show: false
+        },
+        labels: {
+          style: {
+            colors: '#8898aa',
+            fontSize: '12px',
+            fontFamily: 'Inter, sans-serif'
+          }
+        }
+      },
+      yaxis: {
+        labels: {
+          style: {
+            colors: '#8898aa',
+            fontSize: '12px',
+            fontFamily: 'Inter, sans-serif'
+          },
+          formatter: function(value) {
+            return value + '%';
+          }
+        }
+      },
+      grid: {
+        borderColor: '#f1f4f8',
+        strokeDashArray: 5,
+        yaxis: {
+          lines: {
+            show: true
+          }
+        },
+        xaxis: {
+          lines: {
+            show: false
+          }
+        }
+      },
+      tooltip: {
+        y: {
+          formatter: function(value) {
+            return value + '%';
+          }
+        }
+      }
+    };
+
+    var performanceChart = new ApexCharts(document.querySelector("#performanceChart"), performanceOptions);
+    performanceChart.render();
+
+    // Initialize tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
       return new bootstrap.Tooltip(tooltipTriggerEl);

@@ -67,13 +67,15 @@ class ScoreModel:
 
     @staticmethod
     def calculate_grade(total):
-        if total >= 90:
+        if total >= 200:
             return 'A'
-        elif total >= 80:
+        elif total >= 170:
             return 'B'
-        elif total >= 70:
+        elif total >= 150:
             return 'C'
-        elif total >= 60:
+        elif total >= 100:
             return 'D'
+        elif total >= 0:
+            return 'E'
         else:
             return 'F'
