@@ -33,40 +33,199 @@
 
     /* Navbar */
     .navbar {
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      padding: 0.8rem 1.5rem;
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%) !important;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      padding: 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border: none;
+      transition: all 0.4s ease;
+    }
+
+    .navbar .container {
+      padding: 0 1.5rem;
     }
 
     .navbar-brand {
       font-weight: 700;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       color: white !important;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
+      padding: 1rem 1.5rem;
+      margin: 0;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.1);
+      margin-right: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .navbar-brand::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: 0.5s;
+    }
+    
+    .navbar-brand:hover::before {
+      left: 100%;
     }
 
     .navbar-brand i {
-      color: var(--accent-color);
+      color: #fff;
+      font-size: 1.8rem;
+      transition: all 0.3s ease;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    .navbar-brand:hover i {
+      transform: scale(1.1);
+    }
+
+    .navbar-toggler {
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      padding: 0.5rem;
+      font-size: 1.25rem;
+      margin-right: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .navbar-toggler:hover {
+      border-color: white;
+      transform: rotate(90deg);
+    }
+
+    .navbar-toggler:focus {
+      box-shadow: none;
+      outline: none;
     }
 
     .nav-link {
-      color: rgba(255, 255, 255, 0.85) !important;
+      color: rgba(255, 255, 255, 0.9) !important;
       font-weight: 500;
-      padding: 0.5rem 1rem !important;
-      margin: 0 0.2rem;
-      border-radius: var(--border-radius);
-      transition: var(--transition);
+      padding: 1rem 1.5rem !important;
+      margin: 0;
+      border-radius: 0;
+      transition: all 0.3s ease;
+      position: relative;
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      overflow: hidden;
     }
-
-    .nav-link:hover, .nav-link.active {
-      background-color: rgba(255, 255, 255, 0.15);
-      color: white !important;
+    
+    .nav-link::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.3);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease;
     }
 
     .nav-link i {
-      margin-right: 6px;
+      margin-right: 8px;
+      width: 20px;
+      text-align: center;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      display: inline-block;
+    }
+
+    .nav-link:hover {
+      color: white !important;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .nav-link:hover::before {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+    
+    .nav-link:hover i {
+      transform: translateY(-3px) scale(1.1);
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+    }
+
+    .nav-link:hover i {
+      transform: scale(1.1);
+    }
+
+    .nav-link.active {
+      background: rgba(255, 255, 255, 0.2) !important;
+      color: white !important;
+      font-weight: 600;
+    }
+    
+    .nav-link.active::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: white;
+      transform: scaleX(1);
+    }
+
+    .nav-link.active::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 3px;
+      background: #5e72e4;
+      border-radius: 3px 3px 0 0;
+    }
+
+    .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.9%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+    }
+
+    @media (max-width: 991.98px) {
+      .navbar-collapse {
+        background: rgba(44, 62, 80, 0.95);
+        border-radius: 0 0 10px 10px;
+        padding: 0.5rem 1rem 1rem;
+        margin-top: 0;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+      }
+
+      .nav-link {
+        padding: 0.8rem 1rem !important;
+        margin: 0.2rem 0;
+        border-radius: 6px;
+      }
+      
+      .nav-link:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+      
+      .nav-link.active {
+        background: rgba(255, 255, 255, 0.2) !important;
+      }
+      
+      .nav-link::before {
+        display: none;
+      }
+      
+      .navbar-brand {
+        padding: 0.8rem 1.5rem;
+      }
     }
 
     /* Main Content */
@@ -190,7 +349,7 @@
   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
       <a class="navbar-brand" href="{{ url_for('index') }}">
-        <i class="fas fa-graduation-cap"></i>
+        <i class="fas fa-chart-line"></i>
         <span>EduAnalyzer</span>
       </a>
       
@@ -200,28 +359,40 @@
       </button>
       
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
+        <ul class="navbar-nav ms-auto align-items-center">
           <li class="nav-item">
-            <a class="nav-link {% if request.endpoint == 'student_bp.list_students' %}active{% endif %}" 
-               href="{{ url_for('student_bp.list_students') }}">
-              <i class="fas fa-users"></i> Students
+            <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" 
+               href="{{ url_for('index') }}">
+              <i class="fas fa-home"></i> Dashboard
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if request.endpoint == 'score_bp.list_scores' %}active{% endif %}" 
+            <a class="nav-link {% if 'student_bp' in request.endpoint %}active{% endif %}" 
+               href="{{ url_for('student_bp.list_students') }}">
+              <i class="fas fa-user-graduate"></i> Students
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if 'subject_bp' in request.endpoint %}active{% endif %}" 
+               href="{{ url_for('subject_bp.list_subjects') }}">
+              <i class="fas fa-book-open"></i> Subjects
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if 'score_bp' in request.endpoint %}active{% endif %}" 
                href="{{ url_for('score_bp.list_scores') }}">
               <i class="fas fa-chart-bar"></i> Scores
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if request.endpoint == 'analysis_bp.analysis_index' %}active{% endif %}" 
+            <a class="nav-link {% if 'analysis_bp' in request.endpoint %}active{% endif %}" 
                href="{{ url_for('analysis_bp.analysis_index') }}">
               <i class="fas fa-chart-pie"></i> Analysis
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('auth_bp.logout') }}">
-              <i class="fas fa-sign-out-alt"></i> Logout
+          <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+            <a class="btn btn-outline-light btn-sm px-3 py-2 d-flex align-items-center" href="{{ url_for('auth_bp.logout') }}" style="border-radius: 20px;">
+              <i class="fas fa-sign-out-alt me-1"></i> Logout
             </a>
           </li>
         </ul>
