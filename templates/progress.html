@@ -38,43 +38,86 @@
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-const ctx = document.getElementById('progressChart').getContext('2d');
-const progressChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: [{% for score in scores %}'{{ score.subject_name }}',{% endfor %}],
-        datasets: [
-            {
-                label: 'Midterm',
-                data: [{% for score in scores %}{{ score.midterm }},{% endfor %}],
-                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('progressChart');
+    
+    // Get the scores data from the template
+    const scores = JSON.parse('{{ scores|tojson|safe }}');
+    
+    if (scores && scores.length > 0) {
+        // Extract subject names for labels
+        const subjects = [];
+        const midtermScores = [];
+        const finalScores = [];
+        const assignmentScores = [];
+        const totalScores = [];
+        
+        scores.forEach(score => {
+            subjects.push(score.subject_name || score.subject || 'Unknown');
+            midtermScores.push(score.midterm || 0);
+            finalScores.push(score.final || 0);
+            assignmentScores.push(score.assignment || 0);
+            totalScores.push(score.total || 0);
+        });
+        
+        const progressChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: subjects,
+                datasets: [
+                    {
+                        label: 'Midterm',
+                        data: midtermScores,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                    },
+                    {
+                        label: 'Final',
+                        data: finalScores,
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)'
+                    },
+                    {
+                        label: 'Assignment',
+                        data: assignmentScores,
+                        backgroundColor: 'rgba(255, 206, 86, 0.6)'
+                    },
+                    {
+                        label: 'Total',
+                        data: totalScores,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)'
+                    }
+                ]
             },
-            {
-                label: 'Final',
-                data: [{% for score in scores %}{{ score.final }},{% endfor %}],
-                backgroundColor: 'rgba(255, 99, 132, 0.6)'
-            },
-            {
-                label: 'Assignment',
-                data: [{% for score in scores %}{{ score.assignment }},{% endfor %}],
-                backgroundColor: 'rgba(255, 206, 86, 0.6)'
-            },
-            {
-                label: 'Total',
-                data: [{% for score in scores %}{{ score.total }},{% endfor %}],
-                backgroundColor: 'rgba(75, 192, 192, 0.6)'
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { 
+                        display: true, 
+                        text: 'Student Progress Chart',
+                        font: { size: 16 }
+                    }
+                },
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Scores'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Subjects'
+                        }
+                    }
+                }
             }
-        ]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: { position: 'top' },
-            title: { display: true, text: 'Student Progress Chart' }
-        },
-        scales: {
-            y: { beginAtZero: true, max: 100 }
-        }
+        });
+    } else {
+        // Display a message if no data is available
+        ctx.parentNode.innerHTML = '<p class="text-center text-muted">No progress data available for this student.</p>';
     }
 });
 </script>
