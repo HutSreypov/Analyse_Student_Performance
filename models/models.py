@@ -5,7 +5,7 @@ from config import DB_CONFIG
 # --- Database connection helper ---
 def get_connection():
     """Return a new MySQL connection using DB_CONFIG from config.py"""
-    return mysql.connector.connect(**DB_CONFIG)
+    return mysql.connector.connect(**DB_CONFIG)  
 
 
 # --- Create all tables ---
