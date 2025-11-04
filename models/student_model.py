@@ -7,7 +7,15 @@ class StudentModel:
     def get_all():
         db = get_connection()
         cursor = db.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM students ORDER BY name ASC")
+        # Modified to include information about whether student has scores
+        cursor.execute("""
+            SELECT s.*, 
+                   CASE WHEN EXISTS (
+                       SELECT 1 FROM scores WHERE student_id = s.id
+                   ) THEN 1 ELSE 0 END as has_scores
+            FROM students s
+            ORDER BY name ASC
+        """)
         data = cursor.fetchall()
         cursor.close()
         db.close()

@@ -21,13 +21,14 @@
     </thead>
     <tbody>
         {% for score in scores %}
-        <tr>
+        {% set has_score = score.midterm is not none or score.final is not none or score.assignment is not none %}
+        <tr class="{{ 'table-primary' if has_score else 'table-danger' }}">
             <td>{{ score.subject_name }}</td>
-            <td>{{ score.midterm }}</td>
-            <td>{{ score.final }}</td>
-            <td>{{ score.assignment }}</td>
-            <td>{{ score.total }}</td>
-            <td>{{ score.grade }}</td>
+            <td>{{ score.midterm if score.midterm is not none else 'N/A' }}</td>
+            <td>{{ score.final if score.final is not none else 'N/A' }}</td>
+            <td>{{ score.assignment if score.assignment is not none else 'N/A' }}</td>
+            <td>{{ score.total if score.total is not none else 'N/A' }}</td>
+            <td>{{ score.grade if score.grade else 'N/A' }}</td>
         </tr>
         {% endfor %}
     </tbody>

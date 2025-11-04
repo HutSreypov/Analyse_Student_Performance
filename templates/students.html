@@ -139,8 +139,8 @@
             </td>
             <td>
               <a href="{{ url_for('student_bp.student_progress', student_id=student.id) }}"
-                class="btn btn-sm btn-outline-primary">
-                <i class="fas fa-chart-line me-1"></i>View Progress
+                class="btn btn-sm {% if student.has_scores %}btn-outline-primary{% else %}btn-danger text-white{% endif %}">
+                <i class="fas {% if student.has_scores %}fa-chart-line{% else %}fa-exclamation-circle{% endif %} me-1"></i>{% if student.has_scores %}View Progress{% else %}No Scores{% endif %}
               </a>
             </td>
             <td class="action-buttons">
