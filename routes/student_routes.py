@@ -4,6 +4,9 @@ from models.student_model import StudentModel
 
 student_bp = Blueprint('student_bp', __name__, url_prefix='/students')
 
+
+
+
 @student_bp.route('/')
 @login_required
 def list_students():
@@ -46,3 +49,4 @@ def student_progress(student_id):
     student = StudentModel.get_by_id(student_id)
     scores = StudentModel.get_progress(student_id)
     return render_template('progress.html', student=student, scores=scores)
+

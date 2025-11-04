@@ -6,48 +6,93 @@
   .students-container {
     background: white;
     border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     padding: 25px;
     margin-top: 20px;
   }
+
   .table th {
     background-color: #f8f9fa;
     font-weight: 600;
     color: #495057;
     border-top: none;
   }
+
   .table td {
     vertical-align: middle;
   }
-  .gender-male { color: #0d6efd; }
-  .gender-female { color: #dc3545; }
-  .gender-other { color: #6c757d; }
+
+  .gender-male {
+    color: #0d6efd;
+  }
+
+  .gender-female {
+    color: #dc3545;
+  }
+
+  .gender-other {
+    color: #6c757d;
+  }
+
   .action-buttons .btn {
     margin: 0 2px;
     border-radius: 4px;
   }
-  .form-control, .form-select {
+
+  .form-control,
+  .form-select {
     border-radius: 6px;
   }
+
   .btn-add {
     border-radius: 6px;
     padding: 0.5rem 1.5rem;
   }
+
   .badge-class {
     font-size: 0.8em;
     padding: 0.35em 0.65em;
     font-weight: 500;
+
   }
 </style>
+
+<script>
+  function filterStudent() {
+    let input = document.getElementById("filter_student");
+    let filter = input.value.toUpperCase();
+    let table = document.getElementById("student_table");
+    let tr = table.getElementsByTagName("tr");
+
+    for (let i = 1; i < tr.length; i++) { // skip header row
+      let td = tr[i].getElementsByTagName("td")[1]; // assuming student name is 2nd column
+      if (td) {
+        let txtValue = td.textContent || td.innerText;
+        tr[i].style.display = txtValue.toUpperCase().includes(filter) ? "" : "none";
+      }
+    }
+  }
+</script>
+
 {% endblock %}
 
 {% block content %}
 <div class="container-fluid">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">Student Management</h2>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStudentModal">
-      <i class="fas fa-plus me-2"></i>Add New Student
-    </button>
+    <div style="display:flex; width:50%;gap:5px; justify-content: center; align-items: center; ">
+
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Search here...." aria-label="Recipient’s username"
+          id="filter_student" onkeyup="filterStudent()">
+      </div>
+
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStudentModal"
+        style="width:30%; padding:-2px">
+        <i class="fas fa-plus me-2"></i>Add New
+      </button>
+    </div>
+
   </div>
 
   <!-- Students Table -->
@@ -64,14 +109,14 @@
             <th style="width: 180px;">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="student_table">
           {% for student in students %}
           <tr>
             <td class="text-muted">{{ loop.index }}</td>
             <td>
               <div class="d-flex align-items-center">
-                <div class="avatar-sm bg-light rounded-circle me-2 d-flex align-items-center justify-content-center" 
-                     style="width: 32px; height: 32px;">
+                <div class="avatar-sm bg-light rounded-circle me-2 d-flex align-items-center justify-content-center"
+                  style="width: 32px; height: 32px;">
                   <i class="fas fa-user text-primary"></i>
                 </div>
                 <div>
@@ -82,7 +127,8 @@
             </td>
             <td>
               <span class="gender-{{ student.gender|lower }}">
-                <i class="fas {% if student.gender|lower == 'male' %}fa-mars{% elif student.gender|lower == 'female' %}fa-venus{% else %}fa-genderless{% endif %} me-1"></i>
+                <i
+                  class="fas {% if student.gender|lower == 'male' %}fa-mars{% elif student.gender|lower == 'female' %}fa-venus{% else %}fa-genderless{% endif %} me-1"></i>
                 {{ student.gender }}
               </span>
             </td>
@@ -92,21 +138,19 @@
               </span>
             </td>
             <td>
-              <a href="{{ url_for('student_bp.student_progress', student_id=student.id) }}" 
-                 class="btn btn-sm btn-outline-primary">
+              <a href="{{ url_for('student_bp.student_progress', student_id=student.id) }}"
+                class="btn btn-sm btn-outline-primary">
                 <i class="fas fa-chart-line me-1"></i>View Progress
               </a>
             </td>
             <td class="action-buttons">
-              <a href="{{ url_for('student_bp.edit_student', student_id=student.id) }}" 
-                 class="btn btn-sm btn-outline-primary" 
-                 title="Edit">
+              <a href="{{ url_for('student_bp.edit_student', student_id=student.id) }}"
+                class="btn btn-sm btn-outline-primary" title="Edit">
                 <i class="fas fa-edit"></i>
               </a>
-              <a href="{{ url_for('student_bp.delete_student', student_id=student.id) }}" 
-                 class="btn btn-sm btn-outline-danger"
-                 onclick="return confirm('Are you sure you want to delete this student?');"
-                 title="Delete">
+              <a href="{{ url_for('student_bp.delete_student', student_id=student.id) }}"
+                class="btn btn-sm btn-outline-danger"
+                onclick="return confirm('Are you sure you want to delete this student?');" title="Delete">
                 <i class="fas fa-trash"></i>
               </a>
             </td>

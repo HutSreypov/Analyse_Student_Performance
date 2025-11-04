@@ -6,7 +6,7 @@ class SubjectModel:
         db = get_connection()
         try:
             cursor = db.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM subjects")
+            cursor.execute("SELECT * FROM subjects ORDER BY name ASC")
             return cursor.fetchall()
         finally:
             cursor.close()

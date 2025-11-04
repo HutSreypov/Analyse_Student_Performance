@@ -1,4 +1,5 @@
 from config import get_connection
+from flask import request
 
 class StudentModel:
 
@@ -6,7 +7,7 @@ class StudentModel:
     def get_all():
         db = get_connection()
         cursor = db.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM students")
+        cursor.execute("SELECT * FROM students ORDER BY name ASC")
         data = cursor.fetchall()
         cursor.close()
         db.close()
@@ -70,3 +71,12 @@ class StudentModel:
         db.close()
         return data
 
+
+def get_students():
+    search = request.args.get('search', '')  # get query from URL
+    db = get_connection()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM students WHERE name LIKE %s ", (f"%{search}%",))
+    students = cursor.fetchall()
+    cursor.close()
+    db.close()

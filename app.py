@@ -4,6 +4,7 @@ import os
 from flask import Flask, render_template
 from flask_login import LoginManager, login_required, current_user
 
+
 # --- Ensure parent folder is in path to find models and routes ---
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -64,7 +65,10 @@ def index():
 def status():
     return {"status": "ok"}
 
+
+
 # --- Run Flask app ---
 if __name__ == '__main__':
     # Use debug=True only in development
     app.run(debug=True, port=5000)
+
